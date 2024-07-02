@@ -1,0 +1,11 @@
+FROM python:3.11
+
+WORKDIR /demo
+
+RUN pip install fastapi
+
+RUN pip install uvicorn
+
+COPY ../demo_application1.py ./demo_application1.py
+COPY ../demo_application2.py ./demo_application2.py
+COPY ../main_app.py ./main_app.py

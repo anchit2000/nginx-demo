@@ -1,0 +1,55 @@
+version: "3.3"
+
+services:
+  web:
+    image: nginx:latest
+    volumes:
+      - ../nginx.conf:/etc/nginx/nginx.conf
+    container_name: nginx
+    ports:
+      - "8080:8080"
+    environment:
+      - NGINX_PORT=8080
+    depends_on:
+      - api1
+      - api2
+    networks:
+      - nginx_demo
+
+  api1:
+    build:
+        context: ../
+        dockerfile: ./dockerfiles/Dockerfile.demo
+    ports:
+      - "8001:8001"
+    container_name: api1
+    command: uvicorn demo_application1:app --host 0.0.0.0 --port 8001
+    networks:
+      - nginx_demo
+
+  api2:
+    build:
+        context: ../
+        dockerfile: ./dockerfiles/Dockerfile.demo
+    ports:
+      - "8002:8002"
+    container_name: api2
+    command: uvicorn demo_application2:app --host 0.0.0.0 --port 8002
+    networks:
+      - nginx_demo
+
+  main_api:
+    build:
+        context: ../
+        dockerfile: ./dockerfiles/Dockerfile.demo
+    ports:
+      - "8000:8000"
+    container_name: main_api
+    command: uvicorn main_app:app --host 0.0.0.0 --port 8000
+    networks:
+      - nginx_demo
+  
+
+networks:
+  nginx_demo:
+    driver: bridge
